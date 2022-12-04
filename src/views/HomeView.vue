@@ -33,6 +33,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 import { onMounted, reactive, ref } from 'vue';
 import * as tf from '@tensorflow/tfjs';
 import * as tmImage from '@teachablemachine/image';
+import { toRaw } from 'vue'
 
     // More API functions here:
     // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/image
@@ -101,8 +102,12 @@ import * as tmImage from '@teachablemachine/image';
         //   });
         // }
 
+        const rawModel = toRaw(predictState.model)
         
-        const prediction = await (predictState.model as any).predict(imgEl.value, false);
+        const prediction = await (rawModel as any).predict(imgEl.value, false);
+
+        console.log('prediction => ', prediction);
+        
         // for (let i = 0; i < predictState.maxPredictions; i++) {
         //     const classPrediction =
         //         prediction[i].className + ": " + prediction[i].probability.toFixed(2);
