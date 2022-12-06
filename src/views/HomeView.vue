@@ -1,30 +1,27 @@
 <template>
-  <main>
-    <div class="file-upload">
-  <button class="file-upload-btn" type="button" @click="openFileUpload">Add Image</button>
+  <div class="file-upload">
+    <button class="file-upload-btn" type="button" @click="openFileUpload">Add Image</button>
 
-  <div v-show="uploadState.isShowImagUploadWrap" class="image-upload-wrap">
-    <input ref="file" class="file-upload-input" type='file' @change="readURL($event);" accept="image/*" />
-    <div class="drag-text">
-      <h3>Drag and drop a file or select add Image</h3>
+    <div v-show="uploadState.isShowImagUploadWrap" class="image-upload-wrap" @click="openFileUpload">
+      <input ref="file" class="file-upload-input" type='file' @change="readURL($event);" accept="image/*" />
+      <div class="drag-text">
+        <h3>select add Image</h3>
+      </div>
     </div>
-  </div>
-  <div v-show="uploadState.isShowImagUploadContent" class="file-upload-content">
-    <img ref="imgEl"  class="file-upload-image" :src="uploadState.imgSrc" alt="your image" />
-    <div class="image-title-wrap">
-      <button type="button" @click="predict" class="remove-image"> <span class="image-title">Predict</span></button>
+    <div v-show="uploadState.isShowImagUploadContent" class="file-upload-content">
+      <img ref="imgEl"  class="file-upload-image" :src="uploadState.imgSrc" alt="your image" />
+      <div class="image-title-wrap">
+        <button type="button" @click="predict" class="remove-image"> <span class="image-title">Predict</span></button>
+      </div>
     </div>
+
+    <Result :resultList="(predictState.classPrediction as Array<{nation: string, percent: number}>)"/>
   </div>
-</div>
-  </main>
+
   <!-- Copyright (c) 2022 by Aaron Vanston (https://codepen.io/aaronvanston/pen/yNYOXR)
-
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
  -->
 </template>
 
@@ -34,6 +31,8 @@ import { onMounted, reactive, ref } from 'vue';
 import * as tf from '@tensorflow/tfjs';
 import * as tmImage from '@teachablemachine/image';
 import { toRaw } from 'vue'
+import Result from '@/components/Result.vue'
+import { array } from '@tensorflow/tfjs-data';
 
     // More API functions here:
     // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/image
@@ -44,7 +43,8 @@ import { toRaw } from 'vue'
     const predictState = reactive({
       model: '', 
       labelContainer: '', 
-      maxPredictions: 0
+      maxPredictions: 0,
+      classPrediction: [{}]
     })
 
     onMounted(async () => {
@@ -89,32 +89,21 @@ import { toRaw } from 'vue'
       await init()
         // predict can take in an image, video or canvas html element
 
-        // Wait for the sprite sheet to load
-        // image.onload = () => {
-        //   Promise.all([
-        //     // Cut out two sprites from the sprite sheet
-        //     createImageBitmap(image, 0, 0, 32, 32),
-        //     createImageBitmap(image, 32, 0, 32, 32)
-        //   ]).then((sprites) => {
-        //     // Draw each sprite onto the canvas
-        //     ctx.drawImage(sprites[0], 0, 0);
-        //     ctx.drawImage(sprites[1], 32, 32);
-        //   });
-        // }
-
         const rawModel = toRaw(predictState.model)
-        
         const prediction = await (rawModel as any).predict(imgEl.value, false);
-
         console.log('prediction => ', prediction);
         
-        // for (let i = 0; i < predictState.maxPredictions; i++) {
-        //     const classPrediction =
-        //         prediction[i].className + ": " + prediction[i].probability.toFixed(2);
-        //     console.log('classPrediction =>', classPrediction);
-            
-        //     // labelContainer.childNodes[i].innerHTML = classPrediction;
-        // }
+        for (let i = 0; i < predictState.maxPredictions; i++) {
+          const percent = prediction[i].probability.toFixed(2) * 100
+          if(percent > 0) {
+            predictState.classPrediction.push({
+              nation: prediction[i].className,
+              percent
+            })
+          }
+          // labelContainer.childNodes[i].innerHTML = classPrediction;
+        }
+        console.log('classPrediction =>', predictState.classPrediction);
     }
 
     const file = ref()
@@ -173,14 +162,9 @@ const removeUpload = () => {
 </script>
 
 <style scoped>
-body {
-  font-family: sans-serif;
-  background-color: #eeeeee;
-}
 
 .file-upload {
-  background-color: #ffffff;
-  width: 600px;
+  width: 100%;
   margin: 0 auto;
   padding: 20px;
 }
@@ -189,11 +173,11 @@ body {
   width: 100%;
   margin: 0;
   color: #fff;
-  background: #1FB264;
+  background: #bd55b6;
   border: none;
   padding: 10px;
   border-radius: 4px;
-  border-bottom: 4px solid #15824B;
+  border-bottom: 4px solid #bd55b6;
   transition: all .2s ease;
   outline: none;
   text-transform: uppercase;
@@ -201,7 +185,7 @@ body {
 }
 
 .file-upload-btn:hover {
-  background: #1AA059;
+  background: #b82cae;
   color: #ffffff;
   transition: all .2s ease;
   cursor: pointer;
@@ -229,13 +213,13 @@ body {
 
 .image-upload-wrap {
   margin-top: 20px;
-  border: 4px dashed #1FB264;
+  border: 4px dashed #bd55b6;
   position: relative;
 }
 
 .image-dropping,
 .image-upload-wrap:hover {
-  background-color: #1FB264;
+  background-color: #bd55b6;
   border: 4px dashed #ffffff;
 }
 
@@ -251,7 +235,7 @@ body {
 .drag-text h3 {
   font-weight: 100;
   text-transform: uppercase;
-  color: #15824B;
+  color: #bd55b6;
   padding: 60px 0;
 }
 
