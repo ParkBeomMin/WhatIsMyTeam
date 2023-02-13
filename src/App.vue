@@ -20,7 +20,7 @@ import HelloWorld from './components/HelloWorld.vue'
   align-items: center;
   max-width: 400px;
   margin: auto;
-  background-color: rgb(0,0,0,0.6);
+  background-color: rgb(0,0,0,0.9);
   min-height: 100vh;
 }
 

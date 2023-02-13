@@ -1,7 +1,7 @@
 <template>
     <ul>
         <li v-for="(result, i) in resultList" :key="`result-${i}`">
-            <span class="result-nation">{{result.nation}}</span>
+            <span class="result-label">{{result.label}}</span>
             <div class="result-percent-wrap">
                 <div class="result-percent" :style="`width: ${result.percent}%; background-color: black`"></div>
             </div>
@@ -13,7 +13,7 @@
 <script setup lang="ts">
 import { defineProps } from "vue";
 interface Props {
-    resultList: Array<{nation: string, percent: number}>;
+    resultList: Array<{label: string, percent: number}>;
 }
 const props = defineProps<Props>();
 </script>
@@ -25,7 +25,7 @@ const props = defineProps<Props>();
         align-items: center;
     }
 
-    .result-nation {
+    .result-label {
         width: 30%
     }
 

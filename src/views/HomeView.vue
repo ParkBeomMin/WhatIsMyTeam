@@ -2,11 +2,8 @@
   <div class="file-upload">
     <button class="file-upload-btn" type="button" @click="openFileUpload">Add Image</button>
 
-    <div v-show="uploadState.isShowImagUploadWrap" class="image-upload-wrap" @click="openFileUpload">
+    <div v-show="uploadState.isShowImagUploadWrap" class="image-upload-wrap" >
       <input ref="file" class="file-upload-input" type='file' @change="readURL($event);" accept="image/*" />
-      <div class="drag-text">
-        <h3>select add Image</h3>
-      </div>
     </div>
     <div v-show="uploadState.isShowImagUploadContent" class="file-upload-content">
       <img ref="imgEl"  class="file-upload-image" :src="uploadState.imgSrc" alt="your image" />
@@ -15,7 +12,7 @@
       </div>
     </div>
 
-    <Result :resultList="(predictState.classPrediction as Array<{nation: string, percent: number}>)"/>
+    <Result :resultList="(predictState.classPrediction as Array<{label: string, percent: number}>)"/>
   </div>
 
   <!-- Copyright (c) 2022 by Aaron Vanston (https://codepen.io/aaronvanston/pen/yNYOXR)
@@ -38,7 +35,7 @@ import { array } from '@tensorflow/tfjs-data';
     // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/image
 
     // the link to your model provided by Teachable Machine export panel
-    const URL = "https://teachablemachine.withgoogle.com/models/MxcfXMg36/";
+    const URL = "https://teachablemachine.withgoogle.com/models/IqnP46vPV/";
 
     const predictState = reactive({
       model: '', 
@@ -97,7 +94,7 @@ import { array } from '@tensorflow/tfjs-data';
           const percent = prediction[i].probability.toFixed(2) * 100
           if(percent > 0) {
             predictState.classPrediction.push({
-              nation: prediction[i].className,
+              label: prediction[i].className,
               percent
             })
           }
@@ -164,12 +161,14 @@ const removeUpload = () => {
 <style scoped>
 
 .file-upload {
+  min-height: 100vh;
   width: 100%;
   margin: 0 auto;
-  padding: 20px;
+  /* padding: 20px; */
 }
 
-.file-upload-btn {
+.file-upload-btn { position:fixed; 
+  bottom: 10px;
   width: 100%;
   margin: 0;
   color: #fff;
