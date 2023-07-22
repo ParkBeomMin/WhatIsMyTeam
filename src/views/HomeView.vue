@@ -1,56 +1,56 @@
 <template>
     <div class="file-upload">
-        <button
+        <ClubBanner />
+
+        <!-- <button
             v-if="!predictState.myTeam"
             class="file-upload-btn"
             type="button"
             @click="openFileUpload"
         >
             Add Image
-        </button>
+        </button> -->
 
-        <div
-            v-show="uploadState.isShowImagUploadWrap"
-            class="image-upload-wrap"
-        >
-            <input
-                ref="file"
-                class="file-upload-input"
-                type="file"
-                @change="readURL($event)"
-                accept="image/*"
-            />
-        </div>
-        <div
-            v-show="uploadState.isShowImagUploadContent"
-            class="file-upload-content"
-        >
-            <div class="image-container">
-                <img
-                    v-show="predictState.myTeam"
-                    class="my-team"
-                    :src="`/src/assets/club/${predictState.myTeam}.png`"
-                    :alt="predictState.myTeam"
-                />
-                <img
-                    ref="imgEl"
-                    class="file-upload-image"
-                    :src="uploadState.imgSrc"
-                    alt="your image"
+        <div class="wrap">
+            <div v-show="false" class="image-upload-wrap">
+                <input
+                    ref="file"
+                    class="file-upload-input"
+                    type="file"
+                    @change="readURL($event)"
+                    accept="image/*"
                 />
             </div>
-            <div class="image-title-wrap">
-                <button type="button" @click="predict" class="remove-image">
-                    <span class="image-title">{{
-                        predictState.buttonText
-                    }}</span>
-                </button>
+            <div class="file-upload-content">
+                <div class="image-container" @click="openFileUpload">
+                    <img
+                        v-show="predictState.myTeam"
+                        class="my-team"
+                        :src="`/src/assets/club/${predictState.myTeam}.png`"
+                        :alt="predictState.myTeam"
+                    />
+                    <img
+                        v-show="uploadState.isShowImagUploadContent"
+                        ref="imgEl"
+                        class="file-upload-image"
+                        :src="uploadState.imgSrc"
+                        alt="your image"
+                    />
+                </div>
+                <div class="image-title-wrap">
+                    <button type="button" @click="predict" class="remove-image">
+                        <span class="image-title">{{
+                            predictState.buttonText
+                        }}</span>
+                    </button>
+                </div>
             </div>
         </div>
 
         <Result
             :resultList="(predictState.classPrediction as Array<{label: string, percent: number}>)"
         />
+        <ClubBanner slideType="right" />
     </div>
 
     <Loading v-if="predictState.isLoading" />
@@ -69,6 +69,7 @@ import * as tmImage from "@teachablemachine/image";
 import { toRaw } from "vue";
 import Result from "@/components/Result.vue";
 import Loading from "@/components/Loading.vue";
+import ClubBanner from "@/components/ClubBanner.vue";
 // import { array } from '@tensorflow/tfjs-data';
 
 // More API functions here:
@@ -123,6 +124,10 @@ const init = async () => {
 
 // run the webcam image through the image model
 const predict = async () => {
+    if (!uploadState.imgSrc) {
+        alert("사진을 업로드 해주세요!");
+        return;
+    }
     if (predictState.buttonText != "predict") {
         location.reload();
         return;
@@ -204,10 +209,17 @@ const removeUpload = () => {
 
 <style scoped>
 .file-upload {
-    min-height: 100vh;
+    min-height: 100%;
     width: 100%;
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
     /* padding: 20px; */
+    flex: 1;
+}
+
+.wrap {
+    flex: 1;
 }
 
 .file-upload-btn {
@@ -240,6 +252,7 @@ const removeUpload = () => {
 }
 
 .file-upload-content {
+    margin-top: 16px;
     text-align: center;
 }
 
@@ -256,7 +269,6 @@ const removeUpload = () => {
 
 .image-upload-wrap {
     margin-top: 20px;
-    border: 4px dashed #bd55b6;
     position: relative;
 }
 
@@ -332,6 +344,11 @@ const removeUpload = () => {
 .image-container {
     width: fit-content;
     margin: auto;
+    height: 200px;
+    width: 200px;
+    border: #bd55b6 1px solid;
+    border-radius: 15px;
+    margin-bottom: 8px;
 }
 
 /* 키프레임 이름 = 애니메이션 이름 */

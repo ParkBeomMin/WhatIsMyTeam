@@ -1,9 +1,13 @@
 @import "./base.css";
 
 #app {
+    max-width: 480px;
+    margin: auto;
     min-height: 100vh;
     /* background-image: url('./bg.jpg'); */
     font-weight: normal;
+    display: flex;
+    flex-direction: column;
 }
 
 h1,

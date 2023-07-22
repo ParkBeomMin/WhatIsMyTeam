@@ -12,6 +12,8 @@
   "dependencies": {
     "@teachablemachine/image": "^0.8.5",
     "@tensorflow/tfjs": "^4.1.0",
+    "copy-to-clipboard": "^3.3.3",
+    "sweetalert2": "^11.7.19",
     "vue": "^3.2.45",
     "vue-plugin-load-script": "^2.1.1",
     "vue-router": "^4.1.6"
