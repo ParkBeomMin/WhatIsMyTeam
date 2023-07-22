@@ -26,7 +26,7 @@
                     <img
                         v-show="predictState.myTeam"
                         class="my-team"
-                        :src="`/src/assets/club/${predictState.myTeam}.png`"
+                        :src="`/club/${predictState.myTeam}.png`"
                         :alt="predictState.myTeam"
                     />
                     <img

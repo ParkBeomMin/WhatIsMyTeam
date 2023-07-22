@@ -1,7 +1,7 @@
 <template>
     <div :class="['logo-container', slideAnim]">
-        <div v-for="club in data.clubList" :key="club" class="wrap">
-            <img :src="`/src/assets/club/${club}.png`" :alt="club" />
+        <div v-for="club in clubList" :key="club" class="wrap">
+            <img :src="`/club/${club}.png`" :alt="club" />
         </div>
     </div>
 </template>
@@ -10,23 +10,12 @@
 import { reactive, ref } from "@vue/reactivity";
 import { computed } from "@vue/runtime-core";
 import { onMounted, onBeforeUnmount } from "vue";
+import { useClub } from "@/composables/useClub";
 const { slideType = "left" } = defineProps<{ slideType?: string }>();
 
+const { clubList } = useClub();
+
 const data = reactive({
-    clubList: [
-        "Arsenal",
-        "Liverpool",
-        "Fulham",
-        "Chelsea",
-        "Arsenal",
-        "Arsenal",
-        "Liverpool",
-        "Fulham",
-        "Chelsea",
-    ],
-    index: 0,
-    sizeNum: 3,
-    loadingClubList: [],
     interval: null as any,
 });
 
@@ -42,9 +31,10 @@ onMounted(() => {
     // const firstLogo = logos[0].cloneNode(true);
     // logoContainer?.appendChild(firstLogo);
     data.interval = setInterval(() => {
-        data.clubList.push("Arsenal");
-        data.clubList.shift();
-    }, 300);
+        let i = 0;
+        clubList.push(clubList[i++]);
+        clubList.shift();
+    }, 14000);
 });
 const slideLogos = () => {
     const logoContainer = document.querySelector(".logo-container");
@@ -71,6 +61,9 @@ onBeforeUnmount(() => {
     display: flex;
 }
 
+.wrap {
+    margin: 0 4px;
+}
 .slide-left {
     animation: slideLeft 15s linear infinite;
 }

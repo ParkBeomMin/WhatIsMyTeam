@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <div v-for="club in data.loadingClubList" :key="club" class="wrap">
-            <img :src="`/src/assets/club/${club}.png`" :alt="club" />
+            <img :src="`/club/${club}.png`" :alt="club" />
         </div>
     </div>
 </template>
@@ -10,9 +10,10 @@
 import { reactive } from "@vue/reactivity";
 import { computed } from "@vue/runtime-core";
 import { onMounted, onBeforeUnmount } from "vue";
+import { useClub } from "@/composables/useClub";
 
+const { clubList } = useClub();
 const data = reactive({
-    clubList: ["Arsenal", "Liverpool", "Fulham", "Chelsea"],
     index: 0,
     sizeNum: 3,
     loadingClubList: [],
@@ -21,12 +22,9 @@ const data = reactive({
 
 onMounted(() => {
     data.interval = setInterval(() => {
-        data.index++;
-        if (data.index == data.clubList.length) {
-            data.index = 0;
-        }
+        data.index = Math.floor(Math.random() * clubList.length);
 
-        data.loadingClubList = [...[data.clubList[data.index]]] as [];
+        data.loadingClubList = [...[clubList[data.index]]] as [];
         console.log("data.loadingClubList", data.loadingClubList);
     }, 1000);
 });
