@@ -20,8 +20,6 @@ import MoneyLayer from "../components/Layer/Money.vue";
 import { useMoneyLayer } from "../composables/useLayer";
 const { moneyLayerData, setIsShowMoneyLayer } = useMoneyLayer();
 
-const { title } = defineProps<{ title: string }>();
-
 const share = () => {
     copy(`${window.location}`);
     Swal.fire({

@@ -10,7 +10,7 @@
 import { reactive, ref } from "@vue/reactivity";
 import { computed } from "@vue/runtime-core";
 import { onMounted, onBeforeUnmount } from "vue";
-const { slideType = "left" } = defineProps<{ slideType: string }>();
+const { slideType = "left" } = defineProps<{ slideType?: string }>();
 
 const data = reactive({
     clubList: [
@@ -49,7 +49,9 @@ onMounted(() => {
 const slideLogos = () => {
     const logoContainer = document.querySelector(".logo-container");
     // logoContainer.style.animation = `${slideAnim} 15s linear infinite`;
-    logoContainer.style.transform = `translateX(calc(-100% * ${index.value++}))`;
+    (
+        logoContainer as HTMLElement
+    ).style.transform = `translateX(calc(-100% * ${index.value++}))`;
     setTimeout(slideLogos, 6000); // 15초 후에 함수를 다시 호출하여 반복 실행
 };
 
