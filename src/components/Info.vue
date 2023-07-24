@@ -5,3 +5,10 @@
         <p>사진 데이터는 별도의 DB에 저장하지 않습니다.</p>
     </div>
 </template>
+
+<style scoped>
+p {
+    margin: 0px 8px;
+}
+</style>
+>

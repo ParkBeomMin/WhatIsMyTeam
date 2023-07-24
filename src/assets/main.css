@@ -4,6 +4,7 @@ html,
 body,
 #app {
     max-width: 576px;
+    width: 100%;
     margin: auto;
     min-height: 100vh;
     /* background-image: url('./bg.jpg'); */
