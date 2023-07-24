@@ -45,6 +45,7 @@
                     </button>
                 </div>
             </div>
+            <Info v-if="predictState.classPrediction.length == 0" />
         </div>
 
         <Result
@@ -70,6 +71,7 @@ import { toRaw } from "vue";
 import Result from "@/components/Result.vue";
 import Loading from "@/components/Loading.vue";
 import ClubBanner from "@/components/ClubBanner.vue";
+import Info from "../components/Info.vue";
 // import { array } from '@tensorflow/tfjs-data';
 
 // More API functions here:
@@ -85,7 +87,7 @@ const predictState = reactive({
     classPrediction: [] as any[],
     isLoading: false,
     myTeam: "",
-    buttonText: "predict",
+    buttonText: "확인 해보기",
 });
 
 onMounted(async () => {
@@ -128,7 +130,7 @@ const predict = async () => {
         alert("사진을 업로드 해주세요!");
         return;
     }
-    if (predictState.buttonText != "predict") {
+    if (predictState.classPrediction.length > 0) {
         location.reload();
         return;
     }
@@ -161,6 +163,9 @@ const predict = async () => {
 const file = ref();
 const imgEl = ref();
 const openFileUpload = () => {
+    if (uploadState.imgSrc) {
+        return;
+    }
     (file.value as HTMLInputElement).click();
 };
 
@@ -209,7 +214,6 @@ const removeUpload = () => {
 
 <style scoped>
 .file-upload {
-    min-height: 100%;
     width: 100%;
     margin: 0 auto;
     display: flex;
@@ -298,7 +302,6 @@ const removeUpload = () => {
     height: 200px;
     width: 200px;
     margin: auto;
-    padding: 20px;
     object-fit: contain;
 }
 
@@ -306,11 +309,11 @@ const removeUpload = () => {
     width: 200px;
     margin: 0;
     color: #fff;
-    background: #cd4535;
+    background: #bd55b6;
     border: none;
     padding: 10px;
     border-radius: 4px;
-    border-bottom: 4px solid #b02818;
+    border-bottom: 4px solid #bd55b6;
     transition: all 0.2s ease;
     outline: none;
     text-transform: uppercase;
@@ -318,7 +321,7 @@ const removeUpload = () => {
 }
 
 .remove-image:hover {
-    background: #c13b2a;
+    background: #b82cae;
     color: #ffffff;
     transition: all 0.2s ease;
     cursor: pointer;
@@ -341,7 +344,8 @@ const removeUpload = () => {
     animation-duration: 2s;
 }
 
-.image-container {
+.image-container,
+.file-upload-image {
     width: fit-content;
     margin: auto;
     height: 200px;

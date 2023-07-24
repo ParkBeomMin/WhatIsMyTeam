@@ -5,7 +5,7 @@
             <div class="result-percent-wrap">
                 <div
                     class="result-percent"
-                    :style="`width: ${result.percent}%; background-color: black`"
+                    :style="`width: ${result.percent}%; background-color: #b82cae`"
                 ></div>
             </div>
             <span class="result-percent-text"

@@ -36,11 +36,15 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .container {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
     position: absolute;
-    top: 50%;
 }
 
 .wrap {
+    top: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
     position: absolute;
     opacity: 0;
