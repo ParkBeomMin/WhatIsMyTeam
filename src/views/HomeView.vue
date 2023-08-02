@@ -72,6 +72,8 @@ import Result from "@/components/Result.vue";
 import Loading from "@/components/Loading.vue";
 import ClubBanner from "@/components/ClubBanner.vue";
 import Info from "../components/Info.vue";
+import { getAnalytics, logEvent } from "firebase/analytics";
+const analytics = getAnalytics();
 // import { array } from '@tensorflow/tfjs-data';
 
 // More API functions here:
@@ -134,6 +136,8 @@ const predict = async () => {
         location.reload();
         return;
     }
+    logEvent(analytics, "predict", { name: "predict" });
+
     predictState.isLoading = true;
     await init();
     // predict can take in an image, video or canvas html element
