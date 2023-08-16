@@ -5,7 +5,7 @@
 [WhatIsMyTeam](https://what-is-my-team.web.app/)
 
 <p align="center">
-  <img src="assets/example.gif">
+  <img src="/example.gif">
 </p>
 
 ## 기술 🌟
