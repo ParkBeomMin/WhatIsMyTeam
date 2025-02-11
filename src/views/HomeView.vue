@@ -45,12 +45,9 @@
                     </button>
                 </div>
             </div>
-            <Info v-if="predictState.classPrediction.length == 0" />
+            <Info @openMenu="openHamburgerMenu" v-if="predictState.classPrediction.length == 0" />
         </div>
 
-        <Result
-            :resultList="(predictState.classPrediction as Array<{label: string, percent: number}>)"
-        />
         <ClubBanner slideType="right" />
     </div>
 
@@ -64,7 +61,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, reactive, ref, computed } from "vue";
 import * as tf from "@tensorflow/tfjs";
 import * as tmImage from "@teachablemachine/image";
 import { toRaw } from "vue";
@@ -73,14 +70,20 @@ import Loading from "@/components/Loading.vue";
 import ClubBanner from "@/components/ClubBanner.vue";
 import Info from "../components/Info.vue";
 import { getAnalytics, logEvent } from "firebase/analytics";
+import { useRouter, useRoute } from 'vue-router';
+import Header from "@/components/Header.vue";
+import { useTestList } from '@/composables/useTestList';
 const analytics = getAnalytics();
-// import { array } from '@tensorflow/tfjs-data';
+const router = useRouter();
+const route = useRoute();
+const { getCurrentTest } = useTestList();
+const currentTest = computed(() => getCurrentTest(route.path));
 
 // More API functions here:
 // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/image
 
-// the link to your model provided by Teachable Machine export panel
-const URL = "https://teachablemachine.withgoogle.com/models/IqnP46vPV/";
+// URL 변수를 반응형으로 변경
+const modelUrl = computed(() => currentTest.value.modelUrl);
 
 const predictState = reactive({
     model: "" as any,
@@ -92,14 +95,16 @@ const predictState = reactive({
     buttonText: "확인 해보기",
 });
 
+const headerRef = ref();
+
 onMounted(async () => {
     await init();
 });
 
 // Load the image model and setup the webcam
 const init = async () => {
-    const modelURL = URL + "model.json";
-    const metadataURL = URL + "metadata.json";
+    const modelURL = modelUrl.value + "model.json";
+    const metadataURL = modelUrl.value + "metadata.json";
 
     // load the model and metadata
     // Refer to tmImage.loadFromFiles() in the API to support files from a file picker
@@ -140,11 +145,9 @@ const predict = async () => {
 
     predictState.isLoading = true;
     await init();
-    // predict can take in an image, video or canvas html element
 
     const rawModel = toRaw(predictState.model);
     const prediction = await (rawModel as any).predict(imgEl.value, false);
-    console.log("prediction => ", prediction);
 
     for (let i = 0; i < predictState.maxPredictions; i++) {
         const percent = prediction[i].probability.toFixed(2) * 100;
@@ -154,14 +157,15 @@ const predict = async () => {
                 percent,
             });
         }
-        // labelContainer.childNodes[i].innerHTML = classPrediction;
     }
     predictState.isLoading = false;
     predictState.classPrediction.sort((a, b) => b.percent - a.percent);
-    console.log("classPrediction =>", predictState.classPrediction);
-
-    predictState.myTeam = predictState.classPrediction[0].label;
-    predictState.buttonText = "다시 하기";
+    
+    const teamName = predictState.classPrediction[0].label;
+    const encodedResults = encodeURIComponent(JSON.stringify(predictState.classPrediction));
+    const encodedImage = encodeURIComponent(uploadState.imgSrc);
+    
+    router.push(`/result/${teamName}/${encodedResults}/${encodedImage}`);
 };
 
 const file = ref();
@@ -214,6 +218,10 @@ const removeUpload = () => {
 // 	$('.image-upload-wrap').bind('dragleave', function () {
 // 		$('.image-upload-wrap').removeClass('image-dropping');
 // });
+
+const openHamburgerMenu = () => {
+    headerRef.value?.openMenu();
+};
 </script>
 
 <style scoped>

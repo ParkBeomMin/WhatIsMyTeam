@@ -1,18 +1,31 @@
 <template>
-    <ul>
-        <li v-for="(result, i) in resultList" :key="`result-${i}`">
-            <span class="result-label">{{ result.label }}</span>
-            <div class="result-percent-wrap">
-                <div
-                    class="result-percent"
-                    :style="`width: ${result.percent}%; background-color: #b82cae`"
-                ></div>
-            </div>
-            <span class="result-percent-text"
-                >{{ Math.round(result.percent) }}%</span
+    <div class="result-container">
+        <h2 class="result-title">팀 성향 분석 결과</h2>
+        <div class="result-cards">
+            <div 
+                v-for="(result, index) in resultList" 
+                :key="result.label"
+                class="result-card"
+                :class="{ 'top-result': index === 0 }"
             >
-        </li>
-    </ul>
+                <div class="card-header">
+                    <img 
+                        class="team-emblem" 
+                        :src="`/club/${result.label}.png`" 
+                        :alt="result.label"
+                    />
+                    <span class="team-name">{{ result.label }}</span>
+                    <span class="percent">{{ Math.round(result.percent) }}%</span>
+                </div>
+                <div class="progress-bar">
+                    <div 
+                        class="progress" 
+                        :style="{ width: `${result.percent}%` }"
+                    ></div>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -24,31 +37,78 @@ const props = defineProps<Props>();
 </script>
 
 <style scoped>
-li {
+.result-container {
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.result-title {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.result-cards {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.result-card {
+    background: white;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.top-result {
+    background: #fdf2ff;
+    border: 2px solid #bd55b6;
+    transform: scale(1.02);
+}
+
+.card-header {
+    display: flex;
     align-items: center;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
 }
 
-.result-label {
-    width: 30%;
-    margin-left: 16px;
+.team-emblem {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
 }
 
-.result-percent-text {
-    width: 15%;
-    text-align: end;
-    margin-right: 16px;
+.team-name {
+    flex: 1;
+    font-weight: bold;
+    color: #333;
 }
 
-.result-percent-wrap {
-    width: 55%;
-    height: 16px;
-    background-color: white;
+.percent {
+    font-weight: bold;
+    color: #bd55b6;
+    font-size: 1.1rem;
 }
 
-.result-percent {
+.progress-bar {
+    background: #f0f0f0;
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress {
     height: 100%;
+    background: #bd55b6;
+    border-radius: 4px;
+    transition: width 1s ease-in-out;
+}
+
+.top-result .progress {
+    background: linear-gradient(90deg, #bd55b6, #ff8ad8);
 }
 </style>
