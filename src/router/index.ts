@@ -7,6 +7,10 @@ const { testList } = useTestList();
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
+        {
+            path: '/',
+            redirect: testList.value[0].path
+        },
         ...testList.value.map(test => ({
             path: test.path === '/' ? '/' : `/${test.path}`,
             name: test.id,

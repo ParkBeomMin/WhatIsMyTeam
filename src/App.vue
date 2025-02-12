@@ -12,7 +12,6 @@ import KakaoBanner from "@/components/KakaoBanner.vue";
     <Header />
     <div class="container">
         <KakaoBanner />
-        <h1>내가 프리미어리거라면...</h1>
         <RouterView />
     </div>
 </template>

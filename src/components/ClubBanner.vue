@@ -3,11 +3,11 @@
         <div :class="['logo-container', slideAnim]">
             <!-- 첫 번째 세트 -->
             <div v-for="club in clubList" :key="`first-${club}`" class="wrap">
-                <img :src="`/club/${club}.png`" :alt="club" />
+                <img :src="`/club/${currentTest.id}/${club}.png`" :alt="club" />
             </div>
             <!-- 두 번째 세트 (무한 스크롤을 위한 복제) -->
             <div v-for="club in clubList" :key="`second-${club}`" class="wrap">
-                <img :src="`/club/${club}.png`" :alt="club" />
+                <img :src="`/club/${currentTest.id}/${club}.png`" :alt="club" />
             </div>
         </div>
     </div>
@@ -15,10 +15,14 @@
 
 <script setup lang="ts">
 import { computed } from "@vue/runtime-core";
-import { useClub } from "@/composables/useClub";
+import { useTestList } from "@/composables/useTestList";
+import { useRoute } from "vue-router";
 
 const { slideType = "left" } = defineProps<{ slideType?: string }>();
-const { clubList } = useClub();
+const { getCurrentTest } = useTestList();
+const route = useRoute();
+const currentTest = computed(() => getCurrentTest(route.path));
+const clubList = computed(() => currentTest.value.clubList);
 
 const slideAnim = computed(() => {
     return slideType == "right" ? "slide-right" : "slide-left";

@@ -1,6 +1,6 @@
 <template>
     <div class="menu-container">
-        <button class="menu-trigger" @click="isOpen = !isOpen">
+        <button class="menu-trigger" @click="toggleMenu">
             <span class="hamburger-box">
                 <span class="hamburger-inner" :class="{ 'is-active': isOpen }"></span>
             </span>
@@ -24,47 +24,39 @@
         <div 
             v-if="isOpen" 
             class="menu-backdrop" 
-            @click="isOpen = false"
+            @click="emit('update:is-open', false)"
         ></div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useTestList } from '@/composables/useTestList';
+import { ref } from 'vue';
 
 const router = useRouter();
-const isOpen = ref(false);
-const currentTest = ref('premier22-23');
-
-const testList = [
-    {
-        id: 'premier22-23',
-        name: '22-23 프리미어리그',
-        icon: '/icons/premier.png',
-        path: '/'
-    },
-    {
-        id: 'premier23-24',
-        name: '23-24 프리미어리그',
-        icon: '/icons/premier.png',
-        path: '/premier23-24'
-    },
-    {
-        id: 'laliga23-24',
-        name: '23-24 라리가',
-        icon: '/icons/laliga.png',
-        path: '/laliga'
-    }
-];
+const { testList } = useTestList();
+const currentTest = ref(testList.value[0]?.id || 'premier22-23');
 
 const selectTest = (testId: string) => {
-    const test = testList.find(t => t.id === testId);
+    const test = testList.value.find(t => t.id === testId);
     if (test) {
         currentTest.value = testId;
         router.push(test.path);
-        isOpen.value = false;
+        emit('update:is-open', false);
     }
+};
+
+const props = defineProps<{
+    isOpen: boolean;
+}>();
+
+const emit = defineEmits<{
+    'update:is-open': [value: boolean];
+}>();
+
+const toggleMenu = () => {
+    emit('update:is-open', !props.isOpen);
 };
 </script>
 
