@@ -11,18 +11,21 @@
             Add Image
         </button> -->
 
-        <div class="wrap">
-            <div v-show="false" class="image-upload-wrap">
-                <input
-                    ref="file"
-                    class="file-upload-input"
-                    type="file"
-                    @change="readURL($event)"
-                    accept="image/*"
-                />
-            </div>
+        <div class="upload-container">
+            <input
+                ref="file"
+                type="file"
+                @change="readURL($event)"
+                accept="image/*"
+                class="hidden"
+            />
+            
             <div class="file-upload-content">
-                <div class="image-container" @click="openFileUpload">
+                <div 
+                    class="image-container" 
+                    @click="openFileUpload"
+                    :class="{ 'has-image': uploadState.imgSrc }"
+                >
                     <img
                         v-show="predictState.myTeam"
                         class="my-team"
@@ -36,14 +39,20 @@
                         :src="uploadState.imgSrc"
                         alt="your image"
                     />
+                    <div v-if="!uploadState.imgSrc" class="upload-placeholder">
+                        <div class="upload-icon">📸</div>
+                        <p>클릭하여 사진 업로드</p>
+                        <span class="upload-hint">얼굴이 잘 나온 사진을 사용해주세요</span>
+                    </div>
                 </div>
-                <div class="image-title-wrap">
-                    <button type="button" @click="predict" class="remove-image">
-                        <span class="image-title">{{
-                            predictState.buttonText
-                        }}</span>
-                    </button>
-                </div>
+                <button 
+                    v-if="uploadState.imgSrc"
+                    type="button" 
+                    @click="predict" 
+                    class="predict-button"
+                >
+                    {{ predictState.buttonText }}
+                </button>
             </div>
             <Info @openMenu="openHamburgerMenu" v-if="predictState.classPrediction.length == 0" />
         </div>
@@ -234,8 +243,16 @@ const openHamburgerMenu = () => {
     flex: 1;
 }
 
-.wrap {
+.upload-container {
     flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.hidden {
+    display: none;
 }
 
 .file-upload-btn {
@@ -311,10 +328,9 @@ const openHamburgerMenu = () => {
 }
 
 .file-upload-image {
-    height: 200px;
-    width: 200px;
-    margin: auto;
-    object-fit: contain;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .remove-image {
@@ -345,39 +361,72 @@ const openHamburgerMenu = () => {
 }
 
 .my-team {
-    z-index: 1;
     position: absolute;
-    top: 16px;
-    width: 50px;
-    height: 50px;
-    left: 16px;
-
-    animation-name: myTeam;
-    animation-duration: 2s;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
 }
 
-.image-container,
-.file-upload-image {
-    width: fit-content;
-    margin: auto;
-    height: 200px;
-    width: 200px;
-    border: #bd55b6 1px solid;
-    border-radius: 15px;
-    margin-bottom: 8px;
+.image-container {
+    width: 280px;
+    height: 280px;
+    border-radius: 20px;
+    background: white;
+    border: 2px dashed #ddd;
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-/* 키프레임 이름 = 애니메이션 이름 */
-@-webkit-keyframes myTeam {
-    0% {
-        left: -100px;
-        transform: scale(2);
-        opacity: 0;
-    }
-    100% {
-        left: 16px;
-        transform: scale(1);
-        opacity: 1;
-    }
+.image-container:hover {
+    border-color: #bd55b6;
+    background: #fdf2ff;
+}
+
+.image-container.has-image {
+    border-style: solid;
+    border-color: #bd55b6;
+}
+
+.upload-placeholder {
+    text-align: center;
+    color: #666;
+}
+
+.upload-icon {
+    font-size: 3rem;
+    margin-bottom: 12px;
+}
+
+.upload-hint {
+    display: block;
+    font-size: 0.85rem;
+    color: #999;
+    margin-top: 8px;
+}
+
+.predict-button {
+    margin-top: 20px;
+    background: #bd55b6;
+    color: white;
+    border: none;
+    padding: 12px 32px;
+    border-radius: 25px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.predict-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(189, 85, 182, 0.3);
 }
 </style>

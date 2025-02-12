@@ -7,20 +7,23 @@
                 :key="result.label"
                 class="result-card"
                 :class="{ 'top-result': index === 0 }"
+                :style="{ '--delay': `${index * 0.2}s` }"
             >
                 <div class="card-header">
                     <img 
-                        class="team-emblem" 
-                        :src="`/club/${result.label}.png`" 
+                        class="team-emblem"
+                        :src="`/club/${currentTest.id}/${result.label}.png`"
                         :alt="result.label"
                     />
                     <span class="team-name">{{ result.label }}</span>
-                    <span class="percent">{{ Math.round(result.percent) }}%</span>
+                    <span class="percent">
+                        <span class="percent-number">{{ Math.round(result.percent) }}</span>%
+                    </span>
                 </div>
                 <div class="progress-bar">
                     <div 
                         class="progress" 
-                        :style="{ width: `${result.percent}%` }"
+                        :style="{ '--width': `${result.percent}%` }"
                     ></div>
                 </div>
             </div>
@@ -30,10 +33,16 @@
 
 <script setup lang="ts">
 import { defineProps } from "vue";
+import { useTestList } from '@/composables/useTestList';
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
 interface Props {
     resultList: Array<{ label: string; percent: number }>;
 }
 const props = defineProps<Props>();
+const { getCurrentTest } = useTestList();
+const route = useRoute();
+const currentTest = computed(() => getCurrentTest(route.path));
 </script>
 
 <style scoped>
@@ -62,6 +71,10 @@ const props = defineProps<Props>();
     padding: 15px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s;
+    animation: slideIn 0.5s ease-out forwards;
+    animation-delay: var(--delay);
+    opacity: 0;
+    transform: translateY(20px);
 }
 
 .top-result {
@@ -105,10 +118,43 @@ const props = defineProps<Props>();
     height: 100%;
     background: #bd55b6;
     border-radius: 4px;
-    transition: width 1s ease-in-out;
+    width: 0;
+    animation: progressFill 1.2s ease-out forwards;
+    animation-delay: calc(var(--delay) + 0.3s);
 }
 
 .top-result .progress {
     background: linear-gradient(90deg, #bd55b6, #ff8ad8);
+}
+
+.percent-number {
+    display: inline-block;
+    animation: countUp 1s ease-out forwards;
+    animation-delay: calc(var(--delay) + 0.3s);
+    opacity: 0;
+}
+
+@keyframes slideIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes progressFill {
+    to {
+        width: var(--width);
+    }
+}
+
+@keyframes countUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 </style>
