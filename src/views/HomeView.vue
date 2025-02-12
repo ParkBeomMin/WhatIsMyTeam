@@ -24,7 +24,6 @@
                 <div 
                     class="image-container" 
                     @click="openFileUpload"
-                    :class="{ 'has-image': uploadState.imgSrc }"
                 >
                     <img
                         v-show="predictState.myTeam"
@@ -82,6 +81,7 @@ import { getAnalytics, logEvent } from "firebase/analytics";
 import { useRouter, useRoute } from 'vue-router';
 import Header from "@/components/Header.vue";
 import { useTestList } from '@/composables/useTestList';
+import { compressToEncodedURIComponent } from 'lz-string';
 const analytics = getAnalytics();
 const router = useRouter();
 const route = useRoute();
@@ -171,8 +171,13 @@ const predict = async () => {
     predictState.classPrediction.sort((a, b) => b.percent - a.percent);
     
     const teamName = predictState.classPrediction[0].label;
-    const encodedResults = encodeURIComponent(JSON.stringify(predictState.classPrediction));
-    const encodedImage = encodeURIComponent(uploadState.imgSrc);
+    // 결과 데이터를 최소화 (팀명과 퍼센트만 포함)
+    const minimizedResults = predictState.classPrediction.map(r => ({
+        l: r.label,  // label을 l로 축소
+        p: Math.round(r.percent)  // percent를 p로 축소하고 정수로 변환
+    }));
+    const encodedResults = compressToEncodedURIComponent(JSON.stringify(minimizedResults));
+    const encodedImage = compressToEncodedURIComponent(uploadState.imgSrc);
     
     router.push(`/result/${teamName}/${encodedResults}/${encodedImage}`);
 };
@@ -327,10 +332,29 @@ const openHamburgerMenu = () => {
     padding: 60px 0;
 }
 
+.image-container {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 20px auto;
+    background: white;
+    cursor: pointer;
+    border: 1px dashed #bd55b6;
+    border-radius: 15px;
+    transition: all 0.2s;
+}
+
+.image-container:hover {
+    background: #fdf2ff;
+    border-style: solid;
+}
+
 .file-upload-image {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    border: #bd55b6 1px solid;
+    border-radius: 15px;
 }
 
 .remove-image {
@@ -362,42 +386,38 @@ const openHamburgerMenu = () => {
 
 .my-team {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 120px;
-    height: 120px;
+    top: 16px;
+    left: 16px;
+    width: 50px;
+    height: 50px;
     object-fit: contain;
+    z-index: 1;
+    animation-name: myTeam;
+    animation-duration: 2s;
 }
 
-.image-container {
-    width: 280px;
-    height: 280px;
-    border-radius: 20px;
-    background: white;
-    border: 2px dashed #ddd;
-    cursor: pointer;
-    overflow: hidden;
-    position: relative;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.image-container:hover {
-    border-color: #bd55b6;
-    background: #fdf2ff;
-}
-
-.image-container.has-image {
-    border-style: solid;
-    border-color: #bd55b6;
+@-webkit-keyframes myTeam {
+    0% {
+        left: -100px;
+        transform: scale(2);
+        opacity: 0;
+    }
+    100% {
+        left: 16px;
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 
 .upload-placeholder {
     text-align: center;
     color: #666;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    padding: 20px;
 }
 
 .upload-icon {
