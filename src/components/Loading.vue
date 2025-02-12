@@ -33,9 +33,9 @@ const data = reactive({
 
 onMounted(() => {
     data.interval = setInterval(() => {
-        data.index = Math.floor(Math.random() * clubList.length);
+        data.index = Math.floor(Math.random() * clubList.value.length);
 
-        data.loadingClubList = [...[clubList[data.index]]] as [];
+        data.loadingClubList = [...[clubList.value[data.index]]] as [];
         console.log("data.loadingClubList", data.loadingClubList);
     }, 1000);
 });
