@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <div v-for="club in data.loadingClubList" :key="club" class="wrap">
-            <img :src="`/club/${club}.png`" :alt="club" />
+            <img :src="`/club/${currentTest.id}/${club}.png`" :alt="club" />
         </div>
     </div>
 </template>
@@ -10,9 +10,20 @@
 import { reactive } from "@vue/reactivity";
 import { computed } from "@vue/runtime-core";
 import { onMounted, onBeforeUnmount } from "vue";
-import { useClub } from "@/composables/useClub";
+import { useTestList } from "@/composables/useTestList";
+import { useRoute } from "vue-router";
 
-const { clubList } = useClub();
+const { getCurrentTest } = useTestList();
+const route = useRoute();
+const currentTest = computed(() => getCurrentTest(route.path));
+const clubList = computed(() => {
+    return currentTest.value?.clubList || [];
+});
+
+
+
+
+
 const data = reactive({
     index: 0,
     sizeNum: 3,

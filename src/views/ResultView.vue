@@ -4,7 +4,7 @@
             <div class="image-container">
                 <img 
                     class="team-logo" 
-                    :src="`/club/${teamName}.png`" 
+                    :src="`/club/${currentTest.id}/${teamName}.png`" 
                     :alt="teamName"
                 />
                 <img 
@@ -30,9 +30,13 @@ import { useRoute, useRouter } from 'vue-router';
 import Result from '@/components/Result.vue';
 import Header from '@/components/Header.vue';
 import RecommendBanner from '@/components/RecommendBanner.vue';
+import { useTestList } from '@/composables/useTestList';
+import { computed } from 'vue';
 
 const route = useRoute();
 const router = useRouter();
+const { getCurrentTest } = useTestList();
+const currentTest = computed(() => getCurrentTest(route.path));
 
 const teamName = route.params.teamName as string;
 const resultList = JSON.parse(decodeURIComponent(route.params.results as string));
