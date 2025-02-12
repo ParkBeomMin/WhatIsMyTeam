@@ -10,12 +10,12 @@
 
 ## 기술 🌟
 
-- css keyframes을 활용한 애니메이션 효과
-- teachablemachine를 활용한 모델 연동
-- 사진 파일 업로드 기능
-- composition api 활용
-- ga 설정
-- 이미지 크롤링
+-   css keyframes을 활용한 애니메이션 효과
+-   teachablemachine를 활용한 모델 연동
+-   사진 파일 업로드 기능
+-   composition api 활용
+-   ga 설정
+-   이미지 크롤링
 
 ## 개발 환경 🖥
 
@@ -27,8 +27,14 @@
 ![Static Badge](<https://img.shields.io/badge/what_is_my_team-v1.0.0-rgb(0,0,0)>)
 22-23 프리미어리거 데이터를 기반으로 학습된 모델로 추천
 
-## Project Setup
+![Static Badge](<https://img.shields.io/badge/what_is_my_team-v2.0.0-rgb(0,0,0)>)
 
+-   ui개선 💫
+-   여러가지 테스트 가능하도록 추가 🌈
+-   추천 배너 추가 🌟
+-   24-25 프리미어리거 데이터를 기반으로 학습된 모델로 추천 기능 추가 🔥
+
+## Project Setup
 
 ```sh
 npm install --force
