@@ -28,31 +28,57 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router';
 import Result from '@/components/Result.vue';
-import Header from '@/components/Header.vue';
 import RecommendBanner from '@/components/RecommendBanner.vue';
 import { useTestList } from '@/composables/useTestList';
-import { computed } from 'vue';
-
+import { computed, ref, onMounted } from 'vue';
+import { decompressFromEncodedURIComponent } from 'lz-string';
+import copy from "copy-to-clipboard";
+import Swal from "sweetalert2";
 const route = useRoute();
 const router = useRouter();
 const { getCurrentTest } = useTestList();
 const currentTest = computed(() => getCurrentTest(route.path));
 
-const teamName = route.params.teamName as string;
-const resultList = JSON.parse(decodeURIComponent(route.params.results as string));
-const uploadedImage = decodeURIComponent(route.params.image as string);
+const teamName = ref('');
+const resultList = ref([]);
+const uploadedImage = ref('');
 
-const shareResult = () => {
-    const shareUrl = window.location.href;
-    if (navigator.share) {
-        navigator.share({
-            title: '나의 축구팀 테스트 결과',
-            text: `내 성향과 맞는 축구팀은 ${teamName}입니다!`,
-            url: shareUrl
+onMounted(() => {
+    teamName.value = route.params.teamName as string;
+    
+    // 압축된 데이터 복원
+    const decompressedResults = decompressFromEncodedURIComponent(route.params.results as string);
+    const minimizedResults = JSON.parse(decompressedResults);
+    
+    resultList.value = minimizedResults.map((r: any) => ({
+        label: r.l,
+        percent: r.p
+    }));
+    
+    uploadedImage.value = decompressFromEncodedURIComponent(route.params.image as string);
+});
+
+const shareResult = async () => {
+    try {
+        if (navigator.share) {
+            await navigator.share({
+                title: '나의 축구팀 테스트 결과',
+                text: `내 성향과 맞는 축구팀은 ${teamName.value}입니다!`,
+                url: window.location.href
+            });
+        } else {
+            copy(window.location.href);
+            Swal.fire({
+                html: '링크가 복사되었습니다!',
+            });
+        }
+    } catch (error) {
+        console.error('공유 중 오류 발생:', error);
+        const shareUrl = window.location.href;
+        copy(shareUrl);
+        Swal.fire({
+            html: '링크가 복사되었습니다!',
         });
-    } else {
-        navigator.clipboard.writeText(shareUrl);
-        alert('링크가 복사되었습니다!');
     }
 };
 
@@ -66,13 +92,15 @@ const goToHome = () => {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    background: white;
 }
 
 .content {
     flex: 1;
     padding: 20px;
-    padding-bottom: 100px; /* 배너 높이보다 큰 여백 */
+    padding-bottom: 80px;
     text-align: center;
+    background: white;
 }
 
 .image-container {
@@ -115,17 +143,28 @@ const goToHome = () => {
 }
 
 .share-buttons {
-    margin-top: 30px;
+    margin-top: 40px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 40px;
 }
 
 .share-btn, .retry-btn {
-    margin: 10px;
     padding: 10px 20px;
     border: none;
-    border-radius: 4px;
+    border-radius: 25px;
     background: #bd55b6;
     color: white;
     cursor: pointer;
+    font-size: 1rem;
+    min-width: 140px;
+    transition: all 0.2s;
+}
+
+.share-btn:hover, .retry-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .retry-btn {
