@@ -16,39 +16,27 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-
+import { useTestList } from '@/composables/useTestList';
 const router = useRouter();
 const route = useRoute();
+const { testList } = useTestList();
 
-const testList = [
-    {
-        id: 'premier22-23',
-        name: '22-23 프리미어리그',
-        icon: '/icons/premier.png',
-        path: '/'
-    },
-    {
-        id: 'premier23-24',
-        name: '23-24 프리미어리그',
-        icon: '/icons/premier.png',
-        path: '/premier23-24'
-    },
-    {
-        id: 'laliga23-24',
-        name: '23-24 라리가',
-        icon: '/icons/laliga.png',
-        path: '/laliga'
-    }
-];
 
 const currentTestIndex = computed(() => {
-    return testList.findIndex(test => test.path === route.path);
+    return testList.value.findIndex(test => test.path === route.path);
 });
 
 const nextTest = computed(() => {
-    const nextIndex = (currentTestIndex.value + 1) % testList.length;
-    return testList[nextIndex];
+    const filteredTests = testList.value.filter((_, index) => index !== currentTestIndex.value);
+    const randomIndex = Math.floor(Math.random() * filteredTests.length);
+    return filteredTests[randomIndex];
 });
+
+// const nextTest = computed(() => {
+    
+//     const nextIndex = (currentTestIndex.value + 1) % testList.value.length;
+//     return testList.value[nextIndex];
+// });
 
 const goToTest = () => {
     router.push(nextTest.value.path);
