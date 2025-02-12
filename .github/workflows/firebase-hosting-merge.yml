@@ -12,19 +12,19 @@ jobs:
         steps:
             - uses: actions/checkout@v3
             - name: Use Node.js 16
-                uses: actions/setup-node@v3
-                with:
-                node-version: 16 # Or your Node.js version
+              uses: actions/setup-node@v3
+              with:
+              node-version: 16 # Or your Node.js version
 
             - name: Install dependencies
-                run: npm install --force
+              run: npm install --force
 
             - name: Build
-                run: npm run build
+              run: npm run build
 
             - name: Deploy to Firebase Hosting
-                uses: wzieba/firebase-action@v1
-                with:
-                args: deploy --only hosting
-                token: ${{ secrets.FIREBASE_TOKEN }}
-                project: what-is-my-team # Your project ID
+              uses: wzieba/firebase-action@v1
+              with:
+                  args: deploy --only hosting
+                  token: ${{ secrets.FIREBASE_TOKEN }}
+                  project: what-is-my-team # Your project ID
