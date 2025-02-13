@@ -17,7 +17,7 @@ const router = createRouter({
             component: HomeView
         })),
         {
-            path: '/result/:teamName/:results/:image',
+            path: '/result',
             name: 'result',
             component: () => import('../views/ResultView.vue')
         }

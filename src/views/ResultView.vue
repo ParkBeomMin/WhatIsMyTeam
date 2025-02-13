@@ -44,10 +44,17 @@ const resultList = ref([]);
 const uploadedImage = ref('');
 
 onMounted(() => {
-    teamName.value = route.params.teamName as string;
+    const { team, results, image } = route.query;
+    
+    if (!team || !results || !image) {
+        router.push('/');
+        return;
+    }
+    
+    teamName.value = team as string;
     
     // 압축된 데이터 복원
-    const decompressedResults = decompressFromEncodedURIComponent(decodeURIComponent(route.params.results as string));
+    const decompressedResults = decompressFromEncodedURIComponent(decodeURIComponent(results as string));
     const minimizedResults = JSON.parse(decompressedResults);
     
     resultList.value = minimizedResults.map((r: any) => ({
@@ -55,7 +62,7 @@ onMounted(() => {
         percent: r.p
     }));
     
-    uploadedImage.value = decompressFromEncodedURIComponent(decodeURIComponent(route.params.image as string));
+    uploadedImage.value = decompressFromEncodedURIComponent(decodeURIComponent(image as string));
 });
 
 const shareResult = async () => {

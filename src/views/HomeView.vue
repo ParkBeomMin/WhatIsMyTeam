@@ -179,7 +179,14 @@ const predict = async () => {
     const encodedResults = encodeURIComponent(compressToEncodedURIComponent(JSON.stringify(minimizedResults)));
     const encodedImage = encodeURIComponent(compressToEncodedURIComponent(uploadState.imgSrc));
     
-    router.push(`/result/${teamName}/${encodedResults}/${encodedImage}`);
+    router.push({
+        path: '/result',
+        query: {
+            team: teamName,
+            results: encodedResults,
+            image: encodedImage
+        }
+    });
 };
 
 const file = ref();
