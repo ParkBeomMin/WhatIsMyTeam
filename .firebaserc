@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "fir-auth-48e63"
-  }
+    "default": "fir-auth-48e63",
+    "what-is-my-team": "fir-auth-48e63"
+  },
+  "targets": {},
+  "etags": {}
 }
