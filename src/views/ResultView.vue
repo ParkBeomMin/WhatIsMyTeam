@@ -34,6 +34,8 @@ import { computed, ref, onMounted } from 'vue';
 import pako from 'pako';
 import copy from "copy-to-clipboard";
 import Swal from "sweetalert2";
+import { getFirestore, doc, getDoc } from 'firebase/firestore';
+
 const route = useRoute();
 const router = useRouter();
 const { getCurrentTest } = useTestList();
@@ -43,19 +45,28 @@ const teamName = ref('');
 const resultList = ref([]);
 const uploadedImage = ref('');
 
-onMounted(() => {
-    const { team, results, image } = route.query;
+onMounted(async () => {
+    const { id } = route.query;
     
-    if (!team || !results || !image) {
+    if (!id) {
         router.push('/');
         return;
     }
     
-    teamName.value = team as string;
-    
     try {
-        // Base64 디코딩 후 압축 해제
-        const resultsCompressed = new Uint8Array(atob(results as string).split('').map(c => c.charCodeAt(0)));
+        const db = getFirestore();
+        const docRef = doc(db, `WhatIsMyTeam-${currentTest.value.id}`, id as string);
+        const docSnap = await getDoc(docRef);
+        
+        if (!docSnap.exists()) {
+            throw new Error('결과를 찾을 수 없습니다');
+        }
+        
+        const data = docSnap.data();
+        teamName.value = data.team;
+        
+        // 결과 데이터 복원
+        const resultsCompressed = new Uint8Array(atob(data.results).split('').map(c => c.charCodeAt(0)));
         const resultsDecompressed = new TextDecoder().decode(pako.inflate(resultsCompressed));
         const minimizedResults = JSON.parse(resultsDecompressed);
         
@@ -64,8 +75,10 @@ onMounted(() => {
             percent: r.p
         }));
         
-        const imageBytes = pako.inflate(new Uint8Array(atob(image as string).split('').map(c => c.charCodeAt(0))));
-        uploadedImage.value = 'data:image/jpeg;base64,' + btoa(String.fromCharCode.apply(null, imageBytes));
+        // 이미지 데이터 복원
+        const imageCompressed = new Uint8Array(atob(data.image).split('').map(c => c.charCodeAt(0)));
+        const imageDecompressed = new TextDecoder().decode(pako.inflate(imageCompressed));
+        uploadedImage.value = imageDecompressed;
     } catch (error) {
         console.error('데이터 복원 중 오류:', error);
         router.push('/');

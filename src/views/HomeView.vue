@@ -83,6 +83,7 @@ import Header from "@/components/Header.vue";
 import { useTestList } from '@/composables/useTestList';
 import pako from 'pako';
 import { resizeImage } from '@/utils/imageUtils';
+import { getFirestore, collection, addDoc } from 'firebase/firestore';
 const analytics = getAnalytics();
 const router = useRouter();
 const route = useRoute();
@@ -177,28 +178,28 @@ const predict = async () => {
         l: r.label,
         p: Math.round(r.percent)
     }));
-    // 데이터를 UTF-8 바이트 배열로 변환 후 압축
     const resultsStr = JSON.stringify(minimizedResults);
     const resultsCompressed = pako.deflate(new TextEncoder().encode(resultsStr));
-    const encodedResults = btoa(String.fromCharCode.apply(null, resultsCompressed));
+    const encodedResults = btoa(String.fromCharCode.apply(null, Array.from(resultsCompressed)));
     
-    // Base64 이미지를 이진 데이터로 변환
-    const base64Data = uploadState.imgSrc.split(',')[1];
-    const binaryStr = atob(base64Data);
-    const bytes = new Uint8Array(binaryStr.length);
-    for (let i = 0; i < binaryStr.length; i++) {
-        bytes[i] = binaryStr.charCodeAt(i);
-    }
+    // 이미지 데이터 압축
+    const imageBytes = new TextEncoder().encode(uploadState.imgSrc);
+    const imageCompressed = pako.deflate(imageBytes, { level: 9 });
+    const encodedImage = btoa(String.fromCharCode.apply(null, Array.from(imageCompressed)));
     
-    const imageCompressed = pako.deflate(bytes, {level: 9});
-    const encodedImage = btoa(String.fromCharCode.apply(null, imageCompressed));
+    // Firestore에 데이터 저장
+    const db = getFirestore();
+    const docRef = await addDoc(collection(db, `WhatIsMyTeam-${currentTest.value.id}`), {
+        team: teamName,
+        results: encodedResults,
+        image: encodedImage,
+        timestamp: Date.now()
+    });
     
     router.push({
         path: '/result',
         query: {
-            team: teamName,
-            results: encodedResults,
-            image: encodedImage
+            id: docRef.id
         }
     });
 };
