@@ -139,11 +139,6 @@ const shareResult = async () => {
         }
     } catch (error) {
         console.error('공유 중 오류 발생:', error);
-        const shareUrl = window.location.href;
-        copy(shareUrl);
-        Swal.fire({
-            html: '링크가 복사되었습니다!',
-        });
     }
 };
 
