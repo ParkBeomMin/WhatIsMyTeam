@@ -31,7 +31,7 @@ import Result from '@/components/Result.vue';
 import RecommendBanner from '@/components/RecommendBanner.vue';
 import { useTestList } from '@/composables/useTestList';
 import { computed, ref, onMounted } from 'vue';
-import { decompressFromEncodedURIComponent, decompress } from 'lz-string';
+import { decompressFromEncodedURIComponent } from 'lz-string';
 import copy from "copy-to-clipboard";
 import Swal from "sweetalert2";
 const route = useRoute();
@@ -54,7 +54,7 @@ onMounted(() => {
     teamName.value = team as string;
     
     // 압축된 데이터 복원
-    const decompressedResults = decompress(decodeURIComponent(results as string));
+    const decompressedResults = decompressFromEncodedURIComponent(decodeURIComponent(results as string));
     const minimizedResults = JSON.parse(decompressedResults);
     
     resultList.value = minimizedResults.map((r: any) => ({
@@ -62,7 +62,7 @@ onMounted(() => {
         percent: r.p
     }));
     
-    uploadedImage.value = decompress(decodeURIComponent(image as string));
+    uploadedImage.value = decompressFromEncodedURIComponent(decodeURIComponent(image as string));
 });
 
 const shareResult = async () => {
