@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import IconClose from "../icons/IconClose.vue";
 const { title = "" } = defineProps({
-    title: String,
+    title: String, 
 });
 
 const emit = defineEmits<{ (e: "close"): void }>();
