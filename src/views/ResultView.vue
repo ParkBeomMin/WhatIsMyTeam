@@ -39,6 +39,10 @@ import Swal from "sweetalert2";
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import { useHead } from '@vueuse/head';
 import KakaoBanner from '@/components/KakaoBanner.vue';
+import { getAnalytics, logEvent } from "firebase/analytics";
+
+const analytics = getAnalytics();
+
 const route = useRoute();
 const router = useRouter();
 const { getCurrentTest } = useTestList();
@@ -114,10 +118,16 @@ onMounted(async () => {
                 }
             ]
         });
+        logEvent(analytics, 'result_view', {
+            team: teamName.value,
+            test_id: testId,
+            id: id
+        });
     } catch (error) {
         console.error('데이터 복원 중 오류:', error);
         router.push('/');
     } finally {
+
         isLoading.value = false;
     }
 });
