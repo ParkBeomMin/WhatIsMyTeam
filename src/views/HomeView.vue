@@ -176,8 +176,8 @@ const predict = async () => {
         l: r.label,  // label을 l로 축소
         p: Math.round(r.percent)  // percent를 p로 축소하고 정수로 변환
     }));
-    const encodedResults = compressToEncodedURIComponent(JSON.stringify(minimizedResults));
-    const encodedImage = compressToEncodedURIComponent(uploadState.imgSrc);
+    const encodedResults = encodeURIComponent(compressToEncodedURIComponent(JSON.stringify(minimizedResults)));
+    const encodedImage = encodeURIComponent(compressToEncodedURIComponent(uploadState.imgSrc));
     
     router.push(`/result/${teamName}/${encodedResults}/${encodedImage}`);
 };
