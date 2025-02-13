@@ -5,7 +5,7 @@
             <div class="image-container">
                 <img 
                     class="team-logo" 
-                    :src="`/club/${currentTest.id}/${teamName}.png`" 
+                    :src="`/club/${testId}/${teamName}.png`" 
                     :alt="teamName"
                 />
                 <img 
@@ -49,8 +49,8 @@ const resultList = ref([]);
 const uploadedImage = ref('');
 const isLoading = ref(true);
 
+const { id, testId } = route.query;
 onMounted(async () => {
-    const { id, testId } = route.query;
     
     if (!id || !testId) {
         router.push('/');
