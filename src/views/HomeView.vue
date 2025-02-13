@@ -81,7 +81,7 @@ import { getAnalytics, logEvent } from "firebase/analytics";
 import { useRouter, useRoute } from 'vue-router';
 import Header from "@/components/Header.vue";
 import { useTestList } from '@/composables/useTestList';
-import { compressToEncodedURIComponent } from 'lz-string';
+import pako from 'pako';
 const analytics = getAnalytics();
 const router = useRouter();
 const route = useRoute();
@@ -173,12 +173,16 @@ const predict = async () => {
     const teamName = predictState.classPrediction[0].label;
     // 결과 데이터를 최소화 (팀명과 퍼센트만 포함)
     const minimizedResults = predictState.classPrediction.map(r => ({
-        l: r.label,  // label을 l로 축소
-        p: Math.round(r.percent)  // percent를 p로 축소하고 정수로 변환
+        l: r.label,
+        p: Math.round(r.percent)
     }));
-    const encodedResults = encodeURIComponent(compressToEncodedURIComponent(JSON.stringify(minimizedResults)));
-    const encodedImage = encodeURIComponent(compressToEncodedURIComponent(uploadState.imgSrc));
-    console.log("uploadState.imgSrc", uploadState.imgSrc);
+    // 데이터를 UTF-8 바이트 배열로 변환 후 압축
+    const resultsStr = JSON.stringify(minimizedResults);
+    const resultsCompressed = pako.deflate(new TextEncoder().encode(resultsStr));
+    const encodedResults = btoa(String.fromCharCode.apply(null, resultsCompressed));
+    
+    const imageCompressed = pako.deflate(new TextEncoder().encode(uploadState.imgSrc), {level: 9});
+    const encodedImage = btoa(String.fromCharCode.apply(null, imageCompressed));
     
     router.push({
         path: '/result',

@@ -31,7 +31,7 @@ import Result from '@/components/Result.vue';
 import RecommendBanner from '@/components/RecommendBanner.vue';
 import { useTestList } from '@/composables/useTestList';
 import { computed, ref, onMounted } from 'vue';
-import { decompressFromEncodedURIComponent } from 'lz-string';
+import pako from 'pako';
 import copy from "copy-to-clipboard";
 import Swal from "sweetalert2";
 const route = useRoute();
@@ -53,17 +53,24 @@ onMounted(() => {
     
     teamName.value = team as string;
     
-    // 압축된 데이터 복원
-    const decompressedResults = decompressFromEncodedURIComponent(decodeURIComponent(results as string));
-    const minimizedResults = JSON.parse(decompressedResults);
-    
-    resultList.value = minimizedResults.map((r: any) => ({
-        label: r.l,
-        percent: r.p
-    }));
-    
-    uploadedImage.value = decompressFromEncodedURIComponent(decodeURIComponent(image as string));
-    console.log("uploadedImage.value", uploadedImage.value);
+    try {
+        // Base64 디코딩 후 압축 해제
+        const resultsCompressed = new Uint8Array(atob(results as string).split('').map(c => c.charCodeAt(0)));
+        const resultsDecompressed = new TextDecoder().decode(pako.inflate(resultsCompressed));
+        const minimizedResults = JSON.parse(resultsDecompressed);
+        
+        resultList.value = minimizedResults.map((r: any) => ({
+            label: r.l,
+            percent: r.p
+        }));
+        
+        const imageCompressed = new Uint8Array(atob(image as string).split('').map(c => c.charCodeAt(0)));
+        const imageDecompressed = new TextDecoder().decode(pako.inflate(imageCompressed));
+        uploadedImage.value = imageDecompressed;
+    } catch (error) {
+        console.error('데이터 복원 중 오류:', error);
+        router.push('/');
+    }
 });
 
 const shareResult = async () => {

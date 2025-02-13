@@ -16,6 +16,7 @@
         "copy-to-clipboard": "^3.3.3",
         "firebase": "^10.1.0",
         "lz-string": "^1.5.0",
+        "pako": "^2.1.0",
         "sweetalert2": "^11.7.19",
         "vue": "^3.2.45",
         "vue-plugin-load-script": "^2.1.1",
