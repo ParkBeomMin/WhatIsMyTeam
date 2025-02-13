@@ -169,7 +169,6 @@ const predict = async () => {
             });
         }
     }
-    predictState.isLoading = false;
     predictState.classPrediction.sort((a, b) => b.percent - a.percent);
     
     const teamName = predictState.classPrediction[0].label;
@@ -195,6 +194,7 @@ const predict = async () => {
         image: encodedImage,
         timestamp: Date.now()
     });
+    predictState.isLoading = false;
     
     router.push({
         path: '/result',
