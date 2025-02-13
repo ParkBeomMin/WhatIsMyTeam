@@ -59,7 +59,7 @@ onMounted(async () => {
     try {
         isLoading.value = true;
         const db = getFirestore();
-        const docRef = doc(db, `WhatIsMyTeam-${currentTest.value.id}`, id as string);
+        const docRef = doc(db, `${import.meta.env.VITE_FIRESTORE_COLLECTION_NAME}-${currentTest.value.id}`, id as string);
         const docSnap = await getDoc(docRef);
         
         if (!docSnap.exists()) {

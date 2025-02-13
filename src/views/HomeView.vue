@@ -189,7 +189,7 @@ const predict = async () => {
     
     // Firestore에 데이터 저장
     const db = getFirestore();
-    const docRef = await addDoc(collection(db, `WhatIsMyTeam-${currentTest.value.id}`), {
+    const docRef = await addDoc(collection(db, `${import.meta.env.VITE_FIRESTORE_COLLECTION_NAME}-${currentTest.value.id}`), {
         team: teamName,
         results: encodedResults,
         image: encodedImage,

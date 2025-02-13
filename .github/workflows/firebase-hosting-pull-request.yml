@@ -13,6 +13,11 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
+
+            - name: Create .env file
+              run: |
+                  echo "VITE_FIRESTORE_COLLECTION_NAME=${{ secrets.FIRESTORE_COLLECTION_NAME }}" >> .env
+
             - run: npm install --force && npm run build
             - uses: FirebaseExtended/action-hosting-deploy@v0
               with:
