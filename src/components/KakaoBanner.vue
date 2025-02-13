@@ -2,14 +2,25 @@
     <ins
         class="kakao_ad_area"
         style="display: none"
-        data-ad-unit="DAN-tUKHxfIs9UZbbjRi"
-        data-ad-width="320"
-        data-ad-height="50"
+        :data-ad-unit="adUnit"
+        :data-ad-width="width"
+        :data-ad-height="height"
     ></ins>
 </template>
 
 <script setup lang="ts">
 import { onMounted } from "vue";
+
+interface Props {
+    adUnit: string;
+    width?: number;
+    height?: number;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+    width: 320,
+    height: 50
+});
 
 onMounted(() => {
     const script = "//t1.daumcdn.net/kas/static/ba.min.js";

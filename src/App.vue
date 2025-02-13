@@ -11,7 +11,7 @@ import KakaoBanner from "@/components/KakaoBanner.vue";
 <template>
     <Header />
     <div class="container">
-        <KakaoBanner />
+        <KakaoBanner adUnit="DAN-tUKHxfIs9UZbbjRi" :width="320" :height="50" />
         <RouterView />
     </div>
 </template>

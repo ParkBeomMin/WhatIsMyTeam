@@ -16,7 +16,7 @@
             </div>
             
             <Result :resultList="resultList" />
-            
+            <KakaoBanner adUnit="DAN-fv15w1zjxuQBqcl0" :width="250" :height="250" />
             <div class="share-buttons">
                 <button @click="shareResult" class="share-btn">결과 공유하기</button>
                 <button @click="goToHome" class="retry-btn">다시 테스트하기</button>
@@ -38,7 +38,7 @@ import copy from "copy-to-clipboard";
 import Swal from "sweetalert2";
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import { useHead } from '@vueuse/head';
-
+import KakaoBanner from '@/components/KakaoBanner.vue';
 const route = useRoute();
 const router = useRouter();
 const { getCurrentTest } = useTestList();
