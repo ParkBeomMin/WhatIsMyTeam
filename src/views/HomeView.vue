@@ -81,7 +81,7 @@ import { getAnalytics, logEvent } from "firebase/analytics";
 import { useRouter, useRoute } from 'vue-router';
 import Header from "@/components/Header.vue";
 import { useTestList } from '@/composables/useTestList';
-import { compressToEncodedURIComponent } from 'lz-string';
+import { compressToEncodedURIComponent, compress } from 'lz-string';
 const analytics = getAnalytics();
 const router = useRouter();
 const route = useRoute();
@@ -176,8 +176,8 @@ const predict = async () => {
         l: r.label,  // label을 l로 축소
         p: Math.round(r.percent)  // percent를 p로 축소하고 정수로 변환
     }));
-    const encodedResults = encodeURIComponent(compressToEncodedURIComponent(JSON.stringify(minimizedResults)));
-    const encodedImage = encodeURIComponent(compressToEncodedURIComponent(uploadState.imgSrc));
+    const encodedResults = encodeURIComponent(compress(JSON.stringify(minimizedResults)));
+    const encodedImage = encodeURIComponent(compress(uploadState.imgSrc));
     
     router.push({
         path: '/result',
