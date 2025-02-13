@@ -64,9 +64,8 @@ onMounted(() => {
             percent: r.p
         }));
         
-        const imageCompressed = new Uint8Array(atob(image as string).split('').map(c => c.charCodeAt(0)));
-        const imageDecompressed = new TextDecoder().decode(pako.inflate(imageCompressed));
-        uploadedImage.value = imageDecompressed;
+        const imageBytes = pako.inflate(new Uint8Array(atob(image as string).split('').map(c => c.charCodeAt(0))));
+        uploadedImage.value = 'data:image/jpeg;base64,' + btoa(String.fromCharCode.apply(null, imageBytes));
     } catch (error) {
         console.error('데이터 복원 중 오류:', error);
         router.push('/');

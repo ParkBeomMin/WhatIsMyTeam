@@ -82,6 +82,7 @@ import { useRouter, useRoute } from 'vue-router';
 import Header from "@/components/Header.vue";
 import { useTestList } from '@/composables/useTestList';
 import pako from 'pako';
+import { resizeImage } from '@/utils/imageUtils';
 const analytics = getAnalytics();
 const router = useRouter();
 const route = useRoute();
@@ -181,7 +182,15 @@ const predict = async () => {
     const resultsCompressed = pako.deflate(new TextEncoder().encode(resultsStr));
     const encodedResults = btoa(String.fromCharCode.apply(null, resultsCompressed));
     
-    const imageCompressed = pako.deflate(new TextEncoder().encode(uploadState.imgSrc), {level: 9});
+    // Base64 이미지를 이진 데이터로 변환
+    const base64Data = uploadState.imgSrc.split(',')[1];
+    const binaryStr = atob(base64Data);
+    const bytes = new Uint8Array(binaryStr.length);
+    for (let i = 0; i < binaryStr.length; i++) {
+        bytes[i] = binaryStr.charCodeAt(i);
+    }
+    
+    const imageCompressed = pako.deflate(bytes, {level: 9});
     const encodedImage = btoa(String.fromCharCode.apply(null, imageCompressed));
     
     router.push({
@@ -214,16 +223,15 @@ const readURL = (event: Event) => {
     if (input.files && input.files[0]) {
         const reader = new FileReader();
 
-        reader.onload = function (e: Event) {
+        reader.onload = async function (e: Event) {
             uploadState.isShowImagUploadWrap = false;
-
-            console.log("e.target => ", e.target);
-
-            uploadState.imgSrc = (e.target as FileReader)?.result as string;
-
+            const originalImage = (e.target as FileReader)?.result as string;
+            
+            // 이미지 리사이징 (최대 400px)
+            const resizedImage = await resizeImage(originalImage, 400);
+            uploadState.imgSrc = resizedImage;
+            
             uploadState.isShowImagUploadContent = true;
-
-            // $('.image-title').html(input.files[0].name);
         };
 
         reader.readAsDataURL(input.files[0]);
