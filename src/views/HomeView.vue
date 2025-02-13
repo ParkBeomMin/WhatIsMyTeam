@@ -199,7 +199,8 @@ const predict = async () => {
     router.push({
         path: '/result',
         query: {
-            id: docRef.id
+            id: docRef.id,
+            testId: currentTest.value.id
         }
     });
 };

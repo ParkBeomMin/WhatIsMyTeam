@@ -50,9 +50,9 @@ const uploadedImage = ref('');
 const isLoading = ref(true);
 
 onMounted(async () => {
-    const { id } = route.query;
+    const { id, testId } = route.query;
     
-    if (!id) {
+    if (!id || !testId) {
         router.push('/');
         return;
     }
@@ -60,7 +60,7 @@ onMounted(async () => {
     try {
         isLoading.value = true;
         const db = getFirestore();
-        const docRef = doc(db, `${import.meta.env.VITE_FIRESTORE_COLLECTION_NAME}-${currentTest.value.id}`, id as string);
+        const docRef = doc(db, `${import.meta.env.VITE_FIRESTORE_COLLECTION_NAME}-${testId}`, id as string);
         const docSnap = await getDoc(docRef);
         
         if (!docSnap.exists()) {
