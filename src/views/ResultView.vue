@@ -101,10 +101,15 @@ onMounted(async () => {
 const shareResult = async () => {
     try {
         if (navigator.share) {
+            const response = await fetch(`/club/${currentTest.value.id}/${teamName.value}.png`);
+            const blob = await response.blob();
+            const file = new File([blob], `${teamName.value}.png`, { type: 'image/png' });
+            
             await navigator.share({
                 title: '나의 축구팀 테스트 결과',
                 text: `내 성향과 맞는 축구팀은 ${teamName.value}입니다!`,
-                url: window.location.href
+                url: window.location.href,
+                files: [file]
             });
         } else {
             copy(window.location.href);
