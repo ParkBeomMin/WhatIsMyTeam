@@ -63,6 +63,7 @@ onMounted(() => {
     }));
     
     uploadedImage.value = decompressFromEncodedURIComponent(decodeURIComponent(image as string));
+    console.log("uploadedImage.value", uploadedImage.value);
 });
 
 const shareResult = async () => {

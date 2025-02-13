@@ -178,6 +178,7 @@ const predict = async () => {
     }));
     const encodedResults = encodeURIComponent(compressToEncodedURIComponent(JSON.stringify(minimizedResults)));
     const encodedImage = encodeURIComponent(compressToEncodedURIComponent(uploadState.imgSrc));
+    console.log("uploadState.imgSrc", uploadState.imgSrc);
     
     router.push({
         path: '/result',
