@@ -12,7 +12,7 @@
                 <div class="card-header">
                     <img 
                         class="team-emblem"
-                        :src="`/club/${currentTest.id}/${result.label}.png`"
+                        :src="`/club/${testId}/${result.label}.png`"
                         :alt="result.label"
                     />
                     <span class="team-name">{{ result.label }}</span>
@@ -33,16 +33,14 @@
 
 <script setup lang="ts">
 import { defineProps } from "vue";
-import { useTestList } from '@/composables/useTestList';
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 interface Props {
     resultList: Array<{ label: string; percent: number }>;
 }
 const props = defineProps<Props>();
-const { getCurrentTest } = useTestList();
 const route = useRoute();
-const currentTest = computed(() => getCurrentTest(route.path));
+const testId = computed(() => route.query.testId as string);
 </script>
 
 <style scoped>

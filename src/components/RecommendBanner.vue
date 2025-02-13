@@ -20,10 +20,11 @@ import { useTestList } from '@/composables/useTestList';
 const router = useRouter();
 const route = useRoute();
 const { testList } = useTestList();
+const testId = computed(() => route.query.testId as string);
 
 
 const currentTestIndex = computed(() => {
-    return testList.value.findIndex(test => test.path === route.path);
+    return testList.value.findIndex(test => test.id === testId.value);
 });
 
 const nextTest = computed(() => {
