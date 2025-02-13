@@ -1,6 +1,7 @@
 <template>
     <div class="result-page">
-        <div class="content">
+        <Loading v-if="isLoading" />
+        <div v-else class="content">
             <div class="image-container">
                 <img 
                     class="team-logo" 
@@ -29,6 +30,7 @@
 import { useRoute, useRouter } from 'vue-router';
 import Result from '@/components/Result.vue';
 import RecommendBanner from '@/components/RecommendBanner.vue';
+import Loading from '@/components/Loading.vue';
 import { useTestList } from '@/composables/useTestList';
 import { computed, ref, onMounted } from 'vue';
 import pako from 'pako';
@@ -44,6 +46,7 @@ const currentTest = computed(() => getCurrentTest(route.path));
 const teamName = ref('');
 const resultList = ref([]);
 const uploadedImage = ref('');
+const isLoading = ref(true);
 
 onMounted(async () => {
     const { id } = route.query;
@@ -54,6 +57,7 @@ onMounted(async () => {
     }
     
     try {
+        isLoading.value = true;
         const db = getFirestore();
         const docRef = doc(db, `WhatIsMyTeam-${currentTest.value.id}`, id as string);
         const docSnap = await getDoc(docRef);
@@ -63,25 +67,34 @@ onMounted(async () => {
         }
         
         const data = docSnap.data();
+        
+        // 모든 데이터를 준비한 후에 한번에 화면에 표시
+        const promises = [
+            // 결과 데이터 복원
+            (async () => {
+                const resultsCompressed = new Uint8Array(atob(data.results).split('').map(c => c.charCodeAt(0)));
+                const resultsDecompressed = new TextDecoder().decode(pako.inflate(resultsCompressed));
+                const minimizedResults = JSON.parse(resultsDecompressed);
+                resultList.value = minimizedResults.map((r: any) => ({
+                    label: r.l,
+                    percent: r.p
+                }));
+            })(),
+            // 이미지 데이터 복원
+            (async () => {
+                const imageCompressed = new Uint8Array(atob(data.image).split('').map(c => c.charCodeAt(0)));
+                const imageDecompressed = new TextDecoder().decode(pako.inflate(imageCompressed));
+                uploadedImage.value = imageDecompressed;
+            })()
+        ];
+        
+        await Promise.all(promises);
         teamName.value = data.team;
-        
-        // 결과 데이터 복원
-        const resultsCompressed = new Uint8Array(atob(data.results).split('').map(c => c.charCodeAt(0)));
-        const resultsDecompressed = new TextDecoder().decode(pako.inflate(resultsCompressed));
-        const minimizedResults = JSON.parse(resultsDecompressed);
-        
-        resultList.value = minimizedResults.map((r: any) => ({
-            label: r.l,
-            percent: r.p
-        }));
-        
-        // 이미지 데이터 복원
-        const imageCompressed = new Uint8Array(atob(data.image).split('').map(c => c.charCodeAt(0)));
-        const imageDecompressed = new TextDecoder().decode(pako.inflate(imageCompressed));
-        uploadedImage.value = imageDecompressed;
     } catch (error) {
         console.error('데이터 복원 중 오류:', error);
         router.push('/');
+    } finally {
+        isLoading.value = false;
     }
 });
 
