@@ -37,6 +37,7 @@ import pako from 'pako';
 import copy from "copy-to-clipboard";
 import Swal from "sweetalert2";
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import { useHead } from '@vueuse/head';
 
 const route = useRoute();
 const router = useRouter();
@@ -90,6 +91,29 @@ onMounted(async () => {
         
         await Promise.all(promises);
         teamName.value = data.team;
+        
+        // 메타 태그 업데이트
+        useHead({
+            title: `${teamName.value} - 나의 축구팀 테스트 결과`,
+            meta: [
+                {
+                    property: 'og:title',
+                    content: `나의 축구팀은 ${teamName.value}입니다!`
+                },
+                {
+                    property: 'og:description',
+                    content: `내 성향과 가장 잘 맞는 축구팀을 찾아보세요!`
+                },
+                {
+                    property: 'og:image',
+                    content: `/club/${currentTest.value.id}/${teamName.value}.png`
+                },
+                {
+                    property: 'og:url',
+                    content: window.location.href
+                }
+            ]
+        });
     } catch (error) {
         console.error('데이터 복원 중 오류:', error);
         router.push('/');
@@ -101,15 +125,11 @@ onMounted(async () => {
 const shareResult = async () => {
     try {
         if (navigator.share) {
-            const response = await fetch(`/club/${currentTest.value.id}/${teamName.value}.png`);
-            const blob = await response.blob();
-            const file = new File([blob], `${teamName.value}.png`, { type: 'image/png' });
             
             await navigator.share({
                 title: '나의 축구팀 테스트 결과',
                 text: `내 성향과 맞는 축구팀은 ${teamName.value}입니다!`,
                 url: window.location.href,
-                files: [file]
             });
         } else {
             copy(window.location.href);
