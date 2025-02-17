@@ -34,6 +34,10 @@
 -   추천 배너 추가 🌟
 -   24-25 프리미어리거 데이터를 기반으로 학습된 모델로 추천 기능 추가 🔥
 
+![Static Badge](<https://img.shields.io/badge/what_is_my_team-v2.1.0-rgb(0,0,0)>)
+
+-   골때녀 G-리그 데이터를 기반으로 학습된 모델로 추천 기능 추가 🔥
+
 ## Project Setup
 
 ```sh

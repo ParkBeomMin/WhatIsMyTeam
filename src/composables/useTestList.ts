@@ -26,6 +26,14 @@ const testList = ref<Test[]>([
         modelUrl: 'https://teachablemachine.withgoogle.com/models/IqnP46vPV/',
         clubList: ['Arsenal', 'Aston-Villa', 'Bournemouth', 'Brentford', 'Brighton-and-Hove-Albion', 'Chelsea', 'Crystal-Palace', 'Everton', 'Fulham', 'Leeds-United', 'Leicester-City', 'Liverpool', 'Manchester-City', 'Manchester-United', 'Newcastle-United', 'Nottingham-Forest', 'Southampton', 'Tottenham-Hotspur', 'West-Ham-United', 'Wolverhampton-Wanderers']
     },
+    {
+        id: 'kickgoal-G-league',
+        name: '골때녀 G-리그',
+        icon: '/kickgoal-logo.png',
+        path: '/kickgoal-G-league',
+        modelUrl: 'https://teachablemachine.withgoogle.com/models/v1pv-vpbX/',
+        clubList: ['FC개벤져스', 'FC국대패밀리', 'FC불나비', 'FC액셔니스타', 'FC탑걸']
+    },
 ]);
 
 export function useTestList() {
