@@ -9,6 +9,9 @@
             <div v-for="club in clubList" :key="`second-${club}`" class="wrap">
                 <img :src="`/club/${currentTest.id}/${club}.png`" :alt="club" />
             </div>
+            <div v-for="club in clubList" :key="`third-${club}`" class="wrap">
+                <img :src="`/club/${currentTest.id}/${club}.png`" :alt="club" />
+            </div>
         </div>
     </div>
 </template>
