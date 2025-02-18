@@ -20,6 +20,21 @@ const router = createRouter({
             path: '/result',
             name: 'result',
             component: () => import('../views/ResultView.vue')
+        },
+        {
+            path: '/privacy',
+            name: 'privacy',
+            component: () => import('../views/PrivacyView.vue')
+        },
+        {
+            path: '/terms',
+            name: 'terms',
+            component: () => import('../views/TermsView.vue')
+        },
+        {
+            path: '/contact',
+            name: 'contact',
+            component: () => import('../views/ContactView.vue')
         }
     ],
 });

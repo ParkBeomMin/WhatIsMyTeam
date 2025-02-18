@@ -38,6 +38,10 @@
 
 -   골때녀 G-리그 데이터를 기반으로 학습된 모델로 추천 기능 추가 🔥
 
+![Static Badge](<https://img.shields.io/badge/what_is_my_team-v3.0.0-rgb(0,0,0)>)
+
+-   개인정보 처리방침, 이용약관, 문의하기 페이지 추가 🌈
+
 ## Project Setup
 
 ```sh

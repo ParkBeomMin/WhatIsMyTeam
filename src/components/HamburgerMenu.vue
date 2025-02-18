@@ -19,6 +19,15 @@
                     <span>{{ test.name }}</span>
                 </li>
             </ul>
+            <div class="menu-footer">
+                <div class="footer-links">
+                    <a href="/privacy" @click.stop="goToPage('privacy')">개인정보 처리방침</a>
+                    <span class="divider">|</span>
+                    <a href="/terms" @click.stop="goToPage('terms')">이용약관</a>
+                    <span class="divider">|</span>
+                    <a href="/contact" @click.stop="goToPage('contact')">문의하기</a>
+                </div>
+            </div>
         </div>
         
         <div 
@@ -57,6 +66,11 @@ const emit = defineEmits<{
 
 const toggleMenu = () => {
     emit('update:is-open', !props.isOpen);
+};
+
+const goToPage = (page: string) => {
+    router.push(`/${page}`);
+    emit('update:is-open', false);
 };
 </script>
 
@@ -163,6 +177,7 @@ const toggleMenu = () => {
     list-style: none;
     padding: 0;
     margin: 0;
+    margin-bottom: 80px;
 }
 
 .menu-list li {
@@ -186,5 +201,37 @@ const toggleMenu = () => {
     width: 24px;
     height: 24px;
     margin-right: 12px;
+}
+
+.menu-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px;
+    background: white;
+    border-top: 1px solid #eee;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.footer-links a {
+    color: #666;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.footer-links a:hover {
+    color: #bd55b6;
+}
+
+.divider {
+    color: #ddd;
 }
 </style> 
